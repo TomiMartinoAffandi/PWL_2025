@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 class CreateTStokTable extends Migration
 {
@@ -10,9 +11,10 @@ class CreateTStokTable extends Migration
     {
         Schema::create('t_stok', function (Blueprint $table) {
             $table->id('stok_id');
+            $table->integer('supplier_id');
             $table->unsignedBigInteger('barang_id');
             $table->unsignedBigInteger('user_id');
-            $table->dateTime('stok_tanggal');
+            $table->timestamp('stok_tanggal')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->integer('stok_jumlah');
             $table->timestamps();
 
