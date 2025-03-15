@@ -7,6 +7,8 @@
             <td>Username</td>
             <td>Nama</td>
             <td>ID Level Pengguna</td>
+            <td>Kode Level</td>
+            <td>Nama Level</td>
             <td>Aksi</td>
         </tr>
         @foreach ($data as $d)
@@ -15,6 +17,8 @@
             <td>{{ $d->username }}</td>
             <td>{{ $d->nama }}</td>
             <td>{{ $d->level_id }}</td>
+            <td>{{ $d->level_kode}}</td>
+            <td>{{ $d->level_nama}}</td>
             <td>
                 <a href="/PWL_2025/PWL_POS/public/user/ubah/{{ $d->user_id }}">Ubah</a> | <a href="/PWL_2025/PWL_POS/public/user/hapus/{{ $d->user_id }}">Hapus</a>
             </td>
