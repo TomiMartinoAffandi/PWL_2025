@@ -27,7 +27,7 @@
                                     <option value="{{ $item->level_kode}}">{{ $item->level_kode}}</option>
                                 @endforeach
                             </select>
-                            <small class="form-text text-muted">Kode</small>
+                            <small class="form-text text-muted">Kode</small>3s
                         </div>
                     </div>
                 </div>
@@ -62,7 +62,6 @@
                 "data": function (d) {
                     d.level_kode = $('#level_kode').val();
                 }
-
             },
             columns: [
                 // nomor urut dari laravel datatable addIndexColumn()
