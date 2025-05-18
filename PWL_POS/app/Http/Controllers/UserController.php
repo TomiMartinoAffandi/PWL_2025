@@ -5,10 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\LevelModel;
 use App\Models\UserModel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
-
 class UserController extends Controller
 {
     public function index()
@@ -280,5 +281,59 @@ class UserController extends Controller
             }
         }
         return redirect('/');
+    }
+
+    public function profil()
+    {
+        $breadcrumb = (object) [
+            'title' => 'Daftar User',
+            'list' => ['Home', 'User']
+        ];
+
+        $activeMenu = 'profil';
+
+        return view('profil.index', ['breadcrumb' => $breadcrumb, 'activeMenu' => $activeMenu]);
+    }
+
+    public function upload_profil_ajax()
+    {
+        return view('profil.upload_ajax');
+    }
+
+    public function updateProfil(Request $request)
+    {
+        $request->validate([
+            'foto' => 'required|image|mimes:jpeg,png,jpg|max:2048'
+        ]);
+
+        try {
+            $user = Auth::user();
+            $file = $request->file('foto');
+
+            // Nama file unik
+            $filename = $user->id . '_' . time() . '.' . $file->getClientOriginalExtension();
+            $path = $file->storeAs('public/profile_photos', $filename);
+
+            // Hapus foto lama kalau ada
+            if ($user->profile_url && Storage::exists('public/profile_photos/' . $user->profile_url)) {
+                Storage::delete('public/profile_photos/' . $user->profile_url);
+            }
+
+            // Simpan nama file ke DB
+            $user->profile_url = $filename;
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Foto berhasil diupload',
+                'profile_url' => asset('storage/profile_photos/' . $filename),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Upload gagal',
+                'msgField' => [],
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }
