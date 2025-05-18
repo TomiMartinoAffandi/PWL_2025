@@ -16,6 +16,8 @@ Route::pattern('id', '[0-9]+');
 Route::get('login', [AuthController::class, 'login'])->name('login');
 Route::post('login', [AuthController::class, 'postLogin']);
 Route::get('logout', [AuthController::class, 'logout'])->middleware('auth');
+Route::get('register', [AuthController::class, 'register'])->name('register');
+Route::post('register', [AuthController::class, 'postregister']);
 
 // Grup route yang membutuhkan autentikasi 
 Route::middleware(['auth'])->group(function(){
@@ -45,17 +47,18 @@ Route::middleware(['auth'])->group(function(){
     Route::middleware(['authorize:ADM,MNG'])->group(function(){
         Route::group(['prefix' => 'barang'], function () {
             Route::get('/', [BarangController::class, 'index']);
-            Route::post('/barang/list', [BarangController::class, 'list']);
-            Route::get('/barang/create_ajax', [BarangController::class, 'create_ajax']); // ajax form create
-            Route::post('/barang/store_ajax', [BarangController::class, 'store_ajax']); // ajax store
-            Route::get('/barang/{id}/edit_ajax', [BarangController::class, 'edit_ajax']); // ajax form edit
-            Route::put('/barang/{id}/update_ajax', [BarangController::class, 'update_ajax']); // ajax update
-            Route::get('/barang/{id}/delete_ajax', [BarangController::class, 'confirm_ajax']); // ajax form confirm
-            Route::delete('/barang/{id}/delete_ajax', [BarangController::class, 'delete_ajax']); // ajax delete
+            Route::post('/list', [BarangController::class, 'list']);
+            Route::get('/create_ajax', [BarangController::class, 'create_ajax']); // ajax form create
+            Route::post('/store_ajax', [BarangController::class, 'store_ajax']); // ajax store
+            Route::get('/{id}/edit_ajax', [BarangController::class, 'edit_ajax']); // ajax form edit
+            Route::put('/{id}/update_ajax', [BarangController::class, 'update_ajax']); // ajax update
+            Route::get('/{id}/delete_ajax', [BarangController::class, 'confirm_ajax']); // ajax form confirm
+            Route::delete('/{id}/delete_ajax', [BarangController::class, 'delete_ajax']); // ajax delete
 
             // Route untuk Import Excel
-            Route::get('/barang/import', [BarangController::class, 'import']); // ajax form upload excel
-            Route::post('/barang/import_ajax', [BarangController::class, 'import_ajax']); // ajax import excel
+            Route::get('/import', [BarangController::class, 'import']); // ajax form upload excel
+            Route::post('/import_ajax', [BarangController::class, 'import_ajax']); // ajax import excel
+            Route::get('/export_excel', [BarangController::class, 'export_excel']); // ajax import excel
         });
     });
     

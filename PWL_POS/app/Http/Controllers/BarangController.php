@@ -373,4 +373,70 @@ class BarangController extends Controller
         
         return redirect('/');
     }
+
+    public function export_excel()
+    {
+        // Ambil data barang dengan relasi kategori
+        $barang = BarangModel::select(
+                'kategori_id',
+                'barang_kode',
+                'barang_nama',
+                'harga_beli',
+                'harga_jual'
+            )
+            ->with('kategori')
+            ->orderBy('kategori_id')
+            ->get();
+
+        // Buat spreadsheet baru
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // Set header kolom
+        $sheet->setCellValue('A1', 'No');
+        $sheet->setCellValue('B1', 'Kode Barang');
+        $sheet->setCellValue('C1', 'Nama Barang');
+        $sheet->setCellValue('D1', 'Harga Beli');
+        $sheet->setCellValue('E1', 'Harga Jual');
+        $sheet->setCellValue('F1', 'Kategori');
+        
+        $sheet->getStyle('A1:F1')->getFont()->setBold(true);
+        $no = 1;
+        $row = 2;
+        foreach ($barang as $item) {
+            $sheet->setCellValue('A'.$row, $no);
+            $sheet->setCellValue('B'.$row, $item->barang_kode);
+            $sheet->setCellValue('C'.$row, $item->barang_nama);
+            $sheet->setCellValue('D'.$row, $item->harga_beli);
+            $sheet->setCellValue('E'.$row, $item->harga_jual);
+            $sheet->setCellValue('F'.$row, $item->kategori->kategori_nama);
+            $row++;
+            $no++;
+        }
+
+        // Set auto size untuk kolom
+        foreach (range('A', 'F') as $columnID) {
+            $sheet->getColumnDimension($columnID)->setAutoSize(true);
+        }
+
+        // Set judul sheet
+        $sheet->setTitle('Data Barang');
+
+        // Buat writer dan output
+        $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+        $filename = 'Data Barang'.date('Y-m-d_His').'.xlsx';
+
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment; filename="'.$filename.'"');
+        header('Cache-Control: max-age=0');
+        header('Cache-Control: max-age=1');
+        header('Expires: Fri, 11 Nov 2023 11:11:11 GMT'); // Tanggal expired
+        header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+        header('Cache-Control: cache, must-revalidate');
+        header('Pragma: public');
+
+        // Output file langsung ke browser
+        $writer->save('php://output');
+        exit;
+    }
 }

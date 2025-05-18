@@ -44,7 +44,7 @@
           </div>
           <small id="error-password" class="error-text text-danger"></small>
         </div>
-        <div class="row">
+        <div class="row mb-3">
           <div class="col-8">
             <div class="icheck-primary">
               <input type="checkbox" id="remember">
@@ -55,6 +55,9 @@
             <button type="submit" class="btn btn-primary btn-block">Sign In</button>
           </div>
         </div>
+        <p class="mb-0">
+          Belum Punya Akun? <a href="{{ url('register') }}" class="">Register</a>
+        </p>
       </form>
     </div>
   </div>

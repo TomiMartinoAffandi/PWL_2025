@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\UserModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 class AuthController extends Controller
 {
     public function login()
@@ -46,5 +48,46 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
         
         return redirect('login');
+    }
+
+    public function register()
+    {
+        return view('auth.register');
+    }
+
+    public function postRegister(Request $request)
+    {
+        if ($request->ajax() || $request->wantsJson()) {
+            $rules = [
+                'username' => 'required|unique:m_user',
+                'nama' => 'required|string|min:3|max:100',
+                'password' => 'required|min:6|confirmed',
+            ];
+
+            $validator = Validator::make($request->all(), $rules);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Register Gagal',
+                    'errors' => $validator->errors(),
+                ]);
+            }
+
+            $hashedPassword = Hash::make($request['password']);
+
+            UserModel::create([
+                'username' => $request->username,
+                'nama' => $request->nama,
+                'password' => $hashedPassword,
+                'level_id' => 3,
+            ]);
+            return response()->json([
+                'status' => true,
+                'message' => 'Register Berhasil',
+                'redirect' => url('/login'),
+            ]);
+        }
+        return redirect('register');
     }
 }
