@@ -8,6 +8,20 @@ use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\BarangController;
 use Illuminate\Support\Facades\Route;
 use Monolog\Level;
+use App\Http\Controllers\AuthController;
+
+// Pattern untuk parameter id harus berupa angka
+Route::pattern('id', '[0-9]+');
+
+// Route untuk autentikasi
+Route::get('login', [AuthController::class, 'login'])->name('login');
+Route::post('login', [AuthController::class, 'postLogin']);
+Route::get('logout', [AuthController::class, 'logout'])->middleware('auth');
+
+// Grup route yang membutuhkan autentikasi
+Route::middleware(['auth'])->group(function () {
+    // Masukkan semua route yang perlu autentikasi di sini
+});
 
 Route::get('/', [WelcomeController::class, 'index']);
 
